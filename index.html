@@ -111,11 +111,17 @@
                         </div>
                     </div>
                     
-                    <div class="time-filters">
-                        <div class="time-filter active" data-period="daily">Daily</div>
-                        <div class="time-filter" data-period="weekly">Weekly</div>
-                        <div class="time-filter" data-period="monthly">Monthly</div>
-                        <div class="time-filter" data-period="yearly">Yearly</div>
+                    <div class="chart-controls">
+                        <div class="chart-type-selector">
+                            <button class="chart-type-btn active" data-chart-type="pie">Pie Chart</button>
+                            <button class="chart-type-btn" data-chart-type="bar">Bar Chart</button>
+                        </div>
+                        <div class="time-filters">
+                            <div class="time-filter active" data-period="daily">Daily</div>
+                            <div class="time-filter" data-period="weekly">Weekly</div>
+                            <div class="time-filter" data-period="monthly">Monthly</div>
+                            <div class="time-filter" data-period="yearly">Yearly</div>
+                        </div>
                     </div>
                     
                     <div class="chart-container">
@@ -123,20 +129,22 @@
                     </div>
                     
                     <h3 class="section-title">Recent Expenses</h3>
-                    <table class="expense-table">
-                        <thead>
-                            <tr>
-                                <th>Date</th>
-                                <th>Name</th>
-                                <th>Category</th>
-                                <th>Amount</th>
-                                <th>Action</th>
-                            </tr>
-                        </thead>
-                        <tbody id="expense-table-body">
-                            <!-- Expenses will be populated here -->
-                        </tbody>
-                    </table>
+                    <div class="table-container">
+                        <table class="expense-table">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Name</th>
+                                    <th>Category</th>
+                                    <th>Amount</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="expense-table-body">
+                                <!-- Expenses will be populated here -->
+                            </tbody>
+                        </table>
+                    </div>
                     <div id="no-expenses-message" class="no-expenses" style="display: none;">
                         No expenses recorded yet. Add your first expense in the "Add Expense" tab!
                     </div>
