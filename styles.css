@@ -276,6 +276,78 @@ header {
     background-color: #1976D2;
 }
 
+/* Add these styles to your existing CSS */
+
+.category-selection {
+    position: relative;
+}
+
+.back-btn {
+    display: flex;
+    align-items: center;
+    padding: 0.8rem 1rem;
+    background: #f0f0f0;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    margin-bottom: 1rem;
+    font-size: 0.9rem;
+    transition: all 0.3s ease;
+}
+
+.back-btn:hover {
+    background: #e0e0e0;
+}
+
+.back-btn i {
+    margin-right: 5px;
+}
+
+.subcategory-item {
+    display: flex;
+    align-items: center;
+    padding: 1rem 1.5rem;
+    border: 2px solid #e0e0e0;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    background: white;
+    gap: 0.8rem;
+}
+
+.subcategory-item:hover {
+    border-color: #2196F3;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(33, 150, 243, 0.15);
+}
+
+.subcategory-item.selected {
+    background: linear-gradient(135deg, #2196F3, #1976D2);
+    border-color: #2196F3;
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(33, 150, 243, 0.3);
+}
+
+.period-select {
+    width: 100%;
+    padding: 0.3rem;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    margin-top: 0.5rem;
+    font-size: 0.8rem;
+}
+
+.stat-card {
+    position: relative;
+}
+
+/* Update existing styles for better subcategory display */
+.expense-table td:nth-child(3),
+.expense-table td:nth-child(4) {
+    text-transform: capitalize;
+}
+
 /* Stats styles */
 .stats-container {
     display: grid;
@@ -485,3 +557,4 @@ footer {
         font-size: 1.3rem;
     }
 }
+
