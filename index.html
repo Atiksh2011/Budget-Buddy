@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BudgetBuddy - Smart Expense Tracking</title>
+    <!-- Add Google Fonts link -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Make sure CSS path is correct -->
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Rest of your HTML content remains the same -->
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <i>💰</i> BudgetBuddy
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="main-content">
+            <div class="sidebar">
+                <h3><i>📊</i> Navigation</h3>
+                <ul class="nav-tabs">
+                    <li><a href="#" class="active" data-tab="add-expense"><i>➕</i> Add Expense</a></li>
+                    <li><a href="#" data-tab="view-expenses"><i>📈</i> View Expenses</a></li>
+                </ul>
+            </div>
+
+            <div class="content-area">
+                <!-- Add Expense Tab -->
+                <div id="add-expense" class="tab-content active">
+                    <h2 class="section-title">Add New Expense</h2>
+                    <form id="expense-form">
+                        <div class="form-group">
+                            <label for="expense-name">Expense Name</label>
+                            <input type="text" id="expense-name" class="form-control" placeholder="Enter expense name" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Category</label>
+                            <div class="expense-categories">
+                                <div class="category-item" data-category="food">
+                                    <div class="category-icon">🍕</div>
+                                    <div>Food</div>
+                                </div>
+                                <div class="category-item" data-category="transport">
+                                    <div class="category-icon">🚗</div>
+                                    <div>Transport</div>
+                                </div>
+                                <div class="category-item" data-category="entertainment">
+                                    <div class="category-icon">🎬</div>
+                                    <div>Entertainment</div>
+                                </div>
+                                <div class="category-item" data-category="shopping">
+                                    <div class="category-icon">🛍️</div>
+                                    <div>Shopping</div>
+                                </div>
+                                <div class="category-item" data-category="bills">
+                                    <div class="category-icon">🧾</div>
+                                    <div>Bills</div>
+                                </div>
+                                <div class="category-item" data-category="health">
+                                    <div class="category-icon">🏥</div>
+                                    <div>Health</div>
+                                </div>
+                                <div class="category-item" data-category="other">
+                                    <div class="category-icon">📦</div>
+                                    <div>Other</div>
+                                </div>
+                            </div>
+                            <input type="hidden" id="expense-category" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="expense-amount">Amount</label>
+                            <input type="number" id="expense-amount" class="form-control" placeholder="Enter amount" min="0" step="0.01" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="expense-date">Date</label>
+                            <input type="date" id="expense-date" class="form-control" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="expense-notes">Notes (Optional)</label>
+                            <textarea id="expense-notes" class="form-control" rows="3" placeholder="Add any additional notes"></textarea>
+                        </div>
+                        
+                        <button type="submit" class="btn btn-primary">Add Expense</button>
+                    </form>
+                </div>
+
+                <!-- View Expenses Tab -->
+                <div id="view-expenses" class="tab-content">
+                    <h2 class="section-title">Your Expenses</h2>
+                    
+                    <div class="stats-container">
+                        <div class="stat-card">
+                            <h3>Total Spent This Month</h3>
+                            <div class="value" id="total-spent">$0.00</div>
+                        </div>
+                        <div class="stat-card">
+                            <h3>Average Daily Spending</h3>
+                            <div class="value" id="avg-daily">$0.00</div>
+                        </div>
+                        <div class="stat-card">
+                            <h3>Biggest Expense Category</h3>
+                            <div class="value" id="biggest-category">None</div>
+                        </div>
+                    </div>
+                    
+                    <div class="time-filters">
+                        <div class="time-filter active" data-period="daily">Daily</div>
+                        <div class="time-filter" data-period="weekly">Weekly</div>
+                        <div class="time-filter" data-period="monthly">Monthly</div>
+                        <div class="time-filter" data-period="yearly">Yearly</div>
+                    </div>
+                    
+                    <div class="chart-container">
+                        <canvas id="expense-chart"></canvas>
+                    </div>
+                    
+                    <h3 class="section-title">Recent Expenses</h3>
+                    <table class="expense-table">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Name</th>
+                                <th>Category</th>
+                                <th>Amount</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="expense-table-body">
+                            <!-- Expenses will be populated here -->
+                        </tbody>
+                    </table>
+                    <div id="no-expenses-message" class="no-expenses" style="display: none;">
+                        No expenses recorded yet. Add your first expense in the "Add Expense" tab!
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2023 BudgetBuddy. All rights reserved.</p>
+            <p>Track your expenses, achieve your financial goals.</p>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
