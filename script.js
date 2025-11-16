@@ -3,6 +3,17 @@ function formatAmount(amount) {
     return '₹' + parseFloat(amount).toFixed(2);
 }
 
+// Subcategories data
+const subcategories = {
+    food: ['Groceries', 'Dining Out', 'Coffee/Tea', 'Snacks'],
+    transport: ['Fuel', 'Public Transport', 'Vehicle Maintenance', 'Parking/Tolls', 'Taxi', 'Vehicle Insurance'],
+    entertainment: ['Movies', 'Concerts', 'Games', 'Events'],
+    shopping: ['Clothing', 'Personal Care', 'Electronics', 'Home Goods', 'Gifts', 'Hobbies/Leisure'],
+    bills: ['Rent/Mortgage', 'Utilities', 'Internet/Cable', 'Subscriptions', 'Streaming Services', 'Taxes'],
+    health: ['Medication', 'Doctor Appointment', 'Fitness'],
+    other: ['Education', 'Travel', 'Charity/Donations', 'Savings/Investments']
+};
+
 // DOM elements
 const expenseForm = document.getElementById('expense-form');
 const expenseNameInput = document.getElementById('expense-name');
@@ -10,6 +21,10 @@ const expenseAmountInput = document.getElementById('expense-amount');
 const expenseDateInput = document.getElementById('expense-date');
 const expenseNotesInput = document.getElementById('expense-notes');
 const expenseCategoryInput = document.getElementById('expense-category');
+const expenseSubcategoryInput = document.getElementById('expense-subcategory');
+const mainCategories = document.getElementById('main-categories');
+const subCategories = document.getElementById('sub-categories');
+const backToMainBtn = document.getElementById('back-to-main-categories');
 const categoryItems = document.querySelectorAll('.category-item');
 const navTabs = document.querySelectorAll('.nav-tabs a');
 const tabContents = document.querySelectorAll('.tab-content');
@@ -20,22 +35,71 @@ const avgDailyElement = document.getElementById('avg-daily');
 const biggestCategoryElement = document.getElementById('biggest-category');
 const timeFilters = document.querySelectorAll('.time-filter');
 const chartTypeBtns = document.querySelectorAll('.chart-type-btn');
+const periodSelects = document.querySelectorAll('.period-select');
 
 // Chart configuration
 let currentChartType = 'pie';
-let currentPeriod = 'monthly';
+let currentPeriod = 'daily';
 
 // Set today's date as default
 expenseDateInput.valueAsDate = new Date();
 
-// Category selection
+// Main category selection
 categoryItems.forEach(item => {
     item.addEventListener('click', () => {
-        categoryItems.forEach(i => i.classList.remove('selected'));
-        item.classList.add('selected');
-        expenseCategoryInput.value = item.dataset.category;
+        const category = item.dataset.category;
+        showSubcategories(category);
     });
 });
+
+// Show subcategories for selected main category
+function showSubcategories(category) {
+    mainCategories.style.display = 'none';
+    subCategories.style.display = 'block';
+    
+    // Clear previous subcategories
+    subCategories.innerHTML = '';
+    
+    // Add back button
+    const backBtn = document.createElement('button');
+    backBtn.type = 'button';
+    backBtn.className = 'back-btn';
+    backBtn.innerHTML = '<i>←</i> Back to Categories';
+    backBtn.addEventListener('click', showMainCategories);
+    subCategories.appendChild(backBtn);
+    
+    // Add subcategories
+    if (subcategories[category]) {
+        subcategories[category].forEach(subcat => {
+            const subcatItem = document.createElement('div');
+            subcatItem.className = 'subcategory-item';
+            subcatItem.innerHTML = `
+                <div>${subcat}</div>
+            `;
+            subcatItem.addEventListener('click', () => {
+                document.querySelectorAll('.subcategory-item').forEach(item => {
+                    item.classList.remove('selected');
+                });
+                subcatItem.classList.add('selected');
+                expenseCategoryInput.value = category;
+                expenseSubcategoryInput.value = subcat;
+            });
+            subCategories.appendChild(subcatItem);
+        });
+    }
+}
+
+// Show main categories
+function showMainCategories() {
+    mainCategories.style.display = 'grid';
+    subCategories.style.display = 'none';
+    expenseCategoryInput.value = '';
+    expenseSubcategoryInput.value = '';
+    categoryItems.forEach(item => item.classList.remove('selected'));
+}
+
+// Back button event
+backToMainBtn.addEventListener('click', showMainCategories);
 
 // Tab navigation
 navTabs.forEach(tab => {
@@ -60,6 +124,11 @@ navTabs.forEach(tab => {
             updateExpenseDisplay();
         }
     });
+});
+
+// Period selection for stats
+periodSelects.forEach(select => {
+    select.addEventListener('change', updateExpenseDisplay);
 });
 
 // Chart type selection
@@ -97,8 +166,8 @@ function saveExpenses(expenses) {
 expenseForm.addEventListener('submit', (e) => {
     e.preventDefault();
     
-    if (!expenseCategoryInput.value) {
-        alert('Please select a category');
+    if (!expenseCategoryInput.value || !expenseSubcategoryInput.value) {
+        alert('Please select both category and subcategory');
         return;
     }
     
@@ -106,6 +175,7 @@ expenseForm.addEventListener('submit', (e) => {
         id: Date.now(),
         name: expenseNameInput.value,
         category: expenseCategoryInput.value,
+        subcategory: expenseSubcategoryInput.value,
         amount: parseFloat(expenseAmountInput.value),
         date: expenseDateInput.value,
         notes: expenseNotesInput.value
@@ -118,8 +188,7 @@ expenseForm.addEventListener('submit', (e) => {
     // Reset form
     expenseForm.reset();
     expenseDateInput.valueAsDate = new Date();
-    categoryItems.forEach(item => item.classList.remove('selected'));
-    expenseCategoryInput.value = '';
+    showMainCategories();
     
     alert('Expense added successfully!');
     
@@ -163,6 +232,7 @@ function updateExpenseDisplay() {
                     <td>${formattedDate}</td>
                     <td>${expense.name}</td>
                     <td>${expense.category.charAt(0).toUpperCase() + expense.category.slice(1)}</td>
+                    <td>${expense.subcategory}</td>
                     <td class="rupee-symbol">${formatAmount(expense.amount)}</td>
                     <td><span class="delete-btn" onclick="deleteExpense(${expense.id})">Delete</span></td>
                 </tr>
@@ -179,6 +249,35 @@ function updateExpenseDisplay() {
     updateChart(expenses);
 }
 
+// Get expenses for specific period
+function getExpensesForPeriod(expenses, period) {
+    const now = new Date();
+    let startDate;
+    
+    switch(period) {
+        case 'daily':
+            startDate = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+            break;
+        case 'weekly':
+            startDate = new Date(now);
+            startDate.setDate(now.getDate() - now.getDay());
+            break;
+        case 'monthly':
+            startDate = new Date(now.getFullYear(), now.getMonth(), 1);
+            break;
+        case 'yearly':
+            startDate = new Date(now.getFullYear(), 0, 1);
+            break;
+        default:
+            startDate = new Date(now.getFullYear(), now.getMonth(), 1);
+    }
+    
+    return expenses.filter(expense => {
+        const expenseDate = new Date(expense.date);
+        return expenseDate >= startDate && expenseDate <= now;
+    });
+}
+
 // Update statistics
 function updateStats(expenses) {
     if (expenses.length === 0) {
@@ -188,65 +287,109 @@ function updateStats(expenses) {
         return;
     }
     
-    // Current month expenses
-    const now = new Date();
-    const currentMonth = now.getMonth();
-    const currentYear = now.getFullYear();
+    // Get selected periods for each stat
+    const totalPeriod = document.getElementById('total-period').value;
+    const avgPeriod = document.getElementById('avg-period').value;
+    const biggestPeriod = document.getElementById('biggest-period').value;
     
-    const monthExpenses = expenses.filter(expense => {
-        const expenseDate = new Date(expense.date);
-        return expenseDate.getMonth() === currentMonth && 
-               expenseDate.getFullYear() === currentYear;
-    });
-    
-    // Total spent this month
-    const totalSpent = monthExpenses.reduce((sum, expense) => sum + expense.amount, 0);
+    // Calculate total spent for selected period
+    const totalExpenses = getExpensesForPeriod(expenses, totalPeriod);
+    const totalSpent = totalExpenses.reduce((sum, expense) => sum + expense.amount, 0);
     totalSpentElement.textContent = formatAmount(totalSpent);
     
-    // Average daily spending
-    const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
-    const avgDaily = totalSpent / daysInMonth;
+    // Calculate average daily spending for selected period
+    const avgExpenses = getExpensesForPeriod(expenses, avgPeriod);
+    const avgTotal = avgExpenses.reduce((sum, expense) => sum + expense.amount, 0);
+    
+    let avgDaily = 0;
+    const now = new Date();
+    
+    switch(avgPeriod) {
+        case 'daily':
+            avgDaily = avgTotal;
+            break;
+        case 'weekly':
+            avgDaily = avgTotal / 7;
+            break;
+        case 'monthly':
+            const daysInMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate();
+            avgDaily = avgTotal / daysInMonth;
+            break;
+        case 'yearly':
+            const isLeapYear = (now.getFullYear() % 4 === 0 && (now.getFullYear() % 100 !== 0 || now.getFullYear() % 400 === 0));
+            avgDaily = avgTotal / (isLeapYear ? 366 : 365);
+            break;
+    }
+    
     avgDailyElement.textContent = formatAmount(avgDaily);
     
-    // Biggest expense category
+    // Find biggest expense category for selected period
+    const biggestExpenses = getExpensesForPeriod(expenses, biggestPeriod);
+    
+    if (biggestExpenses.length === 0) {
+        biggestCategoryElement.textContent = 'None';
+        return;
+    }
+    
     const categoryTotals = {};
-    monthExpenses.forEach(expense => {
-        if (categoryTotals[expense.category]) {
-            categoryTotals[expense.category] += expense.amount;
+    biggestExpenses.forEach(expense => {
+        const key = `${expense.category}-${expense.subcategory}`;
+        if (categoryTotals[key]) {
+            categoryTotals[key].amount += expense.amount;
         } else {
-            categoryTotals[expense.category] = expense.amount;
+            categoryTotals[key] = {
+                category: expense.category,
+                subcategory: expense.subcategory,
+                amount: expense.amount
+            };
         }
     });
     
-    let biggestCategory = 'None';
+    let biggestExpense = null;
     let maxAmount = 0;
     
-    for (const category in categoryTotals) {
-        if (categoryTotals[category] > maxAmount) {
-            maxAmount = categoryTotals[category];
-            biggestCategory = category.charAt(0).toUpperCase() + category.slice(1);
+    for (const key in categoryTotals) {
+        if (categoryTotals[key].amount > maxAmount) {
+            maxAmount = categoryTotals[key].amount;
+            biggestExpense = categoryTotals[key];
         }
     }
     
-    biggestCategoryElement.textContent = biggestCategory;
+    if (biggestExpense) {
+        const categoryName = biggestExpense.category.charAt(0).toUpperCase() + biggestExpense.category.slice(1);
+        biggestCategoryElement.textContent = `${categoryName} (${biggestExpense.subcategory})`;
+    } else {
+        biggestCategoryElement.textContent = 'None';
+    }
 }
 
 // Update chart
 function updateChart(expenses) {
     const ctx = document.getElementById('expense-chart').getContext('2d');
     
+    // Filter expenses based on current period
+    const periodExpenses = getExpensesForPeriod(expenses, currentPeriod);
+    
     // Prepare data based on expenses
     const categoryTotals = {};
-    expenses.forEach(expense => {
-        if (categoryTotals[expense.category]) {
-            categoryTotals[expense.category] += expense.amount;
+    periodExpenses.forEach(expense => {
+        const key = `${expense.category}-${expense.subcategory}`;
+        if (categoryTotals[key]) {
+            categoryTotals[key].amount += expense.amount;
         } else {
-            categoryTotals[expense.category] = expense.amount;
+            categoryTotals[key] = {
+                category: expense.category,
+                subcategory: expense.subcategory,
+                amount: expense.amount
+            };
         }
     });
     
-    const categories = Object.keys(categoryTotals);
-    const amounts = Object.values(categoryTotals);
+    const labels = Object.keys(categoryTotals).map(key => {
+        const item = categoryTotals[key];
+        return `${item.category.charAt(0).toUpperCase() + item.category.slice(1)} (${item.subcategory})`;
+    });
+    const amounts = Object.keys(categoryTotals).map(key => categoryTotals[key].amount);
     
     // Color palette for categories
     const colorPalette = [
@@ -264,10 +407,10 @@ function updateChart(expenses) {
         window.expenseChart = new Chart(ctx, {
             type: 'pie',
             data: {
-                labels: categories.map(cat => cat.charAt(0).toUpperCase() + cat.slice(1)),
+                labels: labels,
                 datasets: [{
                     data: amounts,
-                    backgroundColor: colorPalette.slice(0, categories.length),
+                    backgroundColor: colorPalette.slice(0, labels.length),
                     borderColor: '#fff',
                     borderWidth: 2
                 }]
@@ -302,7 +445,7 @@ function updateChart(expenses) {
         window.expenseChart = new Chart(ctx, {
             type: 'bar',
             data: {
-                labels: categories.map(cat => cat.charAt(0).toUpperCase() + cat.slice(1)),
+                labels: labels,
                 datasets: [{
                     label: 'Expenses by Category',
                     data: amounts,
@@ -342,3 +485,4 @@ function updateChart(expenses) {
 document.addEventListener('DOMContentLoaded', () => {
     updateExpenseDisplay();
 });
+
