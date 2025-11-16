@@ -181,6 +181,8 @@ header {
     display: block;
     margin-bottom: 0.5rem;
     font-weight: 500;
+    font-size: 1.1rem;
+    color: #333;
 }
 
 .form-control {
@@ -197,43 +199,63 @@ header {
     border-color: #2196F3;
 }
 
+/* Updated Category Styles - Grid Layout like the image */
 .expense-categories {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+    grid-template-columns: repeat(3, 1fr);
     gap: 1rem;
     margin-top: 0.5rem;
 }
 
+@media (max-width: 768px) {
+    .expense-categories {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 0.8rem;
+    }
+}
+
 @media (max-width: 480px) {
     .expense-categories {
-        grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
-        gap: 0.5rem;
+        grid-template-columns: 1fr;
+        gap: 0.6rem;
     }
 }
 
 .category-item {
     display: flex;
-    flex-direction: column;
     align-items: center;
-    padding: 1rem 0.5rem;
-    border: 1px solid #ddd;
-    border-radius: 8px;
+    padding: 1rem 1.5rem;
+    border: 2px solid #e0e0e0;
+    border-radius: 12px;
     cursor: pointer;
     transition: all 0.3s ease;
+    background: white;
+    gap: 0.8rem;
 }
 
 .category-item:hover {
     border-color: #2196F3;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(33, 150, 243, 0.15);
 }
 
 .category-item.selected {
-    background-color: #E3F2FD;
+    background: linear-gradient(135deg, #2196F3, #1976D2);
     border-color: #2196F3;
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(33, 150, 243, 0.3);
 }
 
 .category-icon {
     font-size: 1.5rem;
-    margin-bottom: 0.5rem;
+    width: 30px;
+    text-align: center;
+}
+
+.category-item div:last-child {
+    font-weight: 500;
+    font-size: 1rem;
 }
 
 .btn {
@@ -453,5 +475,13 @@ footer {
     .time-filter, .chart-type-btn {
         padding: 0.4rem 0.8rem;
         font-size: 0.8rem;
+    }
+    
+    .category-item {
+        padding: 0.8rem 1rem;
+    }
+    
+    .category-icon {
+        font-size: 1.3rem;
     }
 }
