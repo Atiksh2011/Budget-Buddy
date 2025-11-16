@@ -19,6 +19,11 @@ const totalSpentElement = document.getElementById('total-spent');
 const avgDailyElement = document.getElementById('avg-daily');
 const biggestCategoryElement = document.getElementById('biggest-category');
 const timeFilters = document.querySelectorAll('.time-filter');
+const chartTypeBtns = document.querySelectorAll('.chart-type-btn');
+
+// Chart configuration
+let currentChartType = 'pie';
+let currentPeriod = 'monthly';
 
 // Set today's date as default
 expenseDateInput.valueAsDate = new Date();
@@ -57,11 +62,22 @@ navTabs.forEach(tab => {
     });
 });
 
+// Chart type selection
+chartTypeBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+        chartTypeBtns.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        currentChartType = btn.dataset.chartType;
+        updateExpenseDisplay();
+    });
+});
+
 // Time filter selection
 timeFilters.forEach(filter => {
     filter.addEventListener('click', () => {
         timeFilters.forEach(f => f.classList.remove('active'));
         filter.classList.add('active');
+        currentPeriod = filter.dataset.period;
         updateExpenseDisplay();
     });
 });
@@ -219,74 +235,107 @@ function updateStats(expenses) {
 function updateChart(expenses) {
     const ctx = document.getElementById('expense-chart').getContext('2d');
     
-    // Get active time filter
-    const activeFilter = document.querySelector('.time-filter.active');
-    const period = activeFilter ? activeFilter.dataset.period : 'monthly';
+    // Prepare data based on expenses
+    const categoryTotals = {};
+    expenses.forEach(expense => {
+        if (categoryTotals[expense.category]) {
+            categoryTotals[expense.category] += expense.amount;
+        } else {
+            categoryTotals[expense.category] = expense.amount;
+        }
+    });
     
-    // Prepare data based on selected period
-    let labels = [];
-    let data = [];
+    const categories = Object.keys(categoryTotals);
+    const amounts = Object.values(categoryTotals);
     
-    // For demo purposes, we'll create some sample data
-    // In a real app, you would process the actual expenses
-    if (period === 'daily') {
-        labels = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
-        data = [120, 190, 300, 500, 200, 300, 450];
-    } else if (period === 'weekly') {
-        labels = ['Week 1', 'Week 2', 'Week 3', 'Week 4'];
-        data = [1200, 1900, 1500, 2100];
-    } else if (period === 'monthly') {
-        labels = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'];
-        data = [5000, 7000, 6500, 8000, 7500, 9000];
-    } else if (period === 'yearly') {
-        labels = ['2019', '2020', '2021', '2022', '2023'];
-        data = [45000, 52000, 58000, 62000, 70000];
-    }
-    
-    // Format data with rupee symbol for tooltips
-    const formattedData = data.map(value => formatAmount(value));
+    // Color palette for categories
+    const colorPalette = [
+        '#2196F3', '#FF9800', '#4CAF50', '#F44336', 
+        '#9C27B0', '#FFEB3B', '#00BCD4', '#795548'
+    ];
     
     // Create or update chart
     if (window.expenseChart) {
         window.expenseChart.destroy();
     }
     
-    window.expenseChart = new Chart(ctx, {
-        type: 'bar',
-        data: {
-            labels: labels,
-            datasets: [{
-                label: 'Expenses',
-                data: data,
-                backgroundColor: '#4CAF50',
-                borderColor: '#2E7D32',
-                borderWidth: 1
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            scales: {
-                y: {
-                    beginAtZero: true,
-                    ticks: {
-                        callback: function(value) {
-                            return formatAmount(value);
-                        }
-                    }
-                }
+    if (currentChartType === 'pie') {
+        // Pie Chart Configuration
+        window.expenseChart = new Chart(ctx, {
+            type: 'pie',
+            data: {
+                labels: categories.map(cat => cat.charAt(0).toUpperCase() + cat.slice(1)),
+                datasets: [{
+                    data: amounts,
+                    backgroundColor: colorPalette.slice(0, categories.length),
+                    borderColor: '#fff',
+                    borderWidth: 2
+                }]
             },
-            plugins: {
-                tooltip: {
-                    callbacks: {
-                        label: function(context) {
-                            return formatAmount(context.parsed.y);
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: {
+                            padding: 15,
+                            usePointStyle: true
+                        }
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                const label = context.label || '';
+                                const value = context.parsed;
+                                const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                const percentage = Math.round((value / total) * 100);
+                                return `${label}: ${formatAmount(value)} (${percentage}%)`;
+                            }
                         }
                     }
                 }
             }
-        }
-    });
+        });
+    } else {
+        // Bar Chart Configuration
+        window.expenseChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: categories.map(cat => cat.charAt(0).toUpperCase() + cat.slice(1)),
+                datasets: [{
+                    label: 'Expenses by Category',
+                    data: amounts,
+                    backgroundColor: '#2196F3',
+                    borderColor: '#1976D2',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            callback: function(value) {
+                                return formatAmount(value);
+                            }
+                        }
+                    }
+                },
+                plugins: {
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return formatAmount(context.parsed.y);
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    }
 }
 
 // Initialize the app
