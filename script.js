@@ -1,222 +1,205 @@
-// Sample expense data
-let expenses = JSON.parse(localStorage.getItem('expenses')) || [
-    { id: 1, name: "Grocery Shopping", category: "food", amount: 85.40, date: "2023-10-15" },
-    { id: 2, name: "Gas Station", category: "transport", amount: 45.00, date: "2023-10-14" },
-    { id: 3, name: "Movie Tickets", category: "entertainment", amount: 32.50, date: "2023-10-13" },
-    { id: 4, name: "Electricity Bill", category: "bills", amount: 120.75, date: "2023-10-12" },
-    { id: 5, name: "New Shoes", category: "shopping", amount: 89.99, date: "2023-10-11" }
-];
+// Format amount to display with rupee symbol
+function formatAmount(amount) {
+    return '₹' + parseFloat(amount).toFixed(2);
+}
 
-// Chart instance
-let expenseChart;
+// DOM elements
+const expenseForm = document.getElementById('expense-form');
+const expenseNameInput = document.getElementById('expense-name');
+const expenseAmountInput = document.getElementById('expense-amount');
+const expenseDateInput = document.getElementById('expense-date');
+const expenseNotesInput = document.getElementById('expense-notes');
+const expenseCategoryInput = document.getElementById('expense-category');
+const categoryItems = document.querySelectorAll('.category-item');
+const navTabs = document.querySelectorAll('.nav-tabs a');
+const tabContents = document.querySelectorAll('.tab-content');
+const expenseTableBody = document.getElementById('expense-table-body');
+const noExpensesMessage = document.getElementById('no-expenses-message');
+const totalSpentElement = document.getElementById('total-spent');
+const avgDailyElement = document.getElementById('avg-daily');
+const biggestCategoryElement = document.getElementById('biggest-category');
+const timeFilters = document.querySelectorAll('.time-filter');
 
-// Initialize the application
-document.addEventListener('DOMContentLoaded', function() {
-    initializeEventListeners();
-    setDefaultDate();
-    initChart();
-    updateExpenseDisplay();
+// Set today's date as default
+expenseDateInput.valueAsDate = new Date();
+
+// Category selection
+categoryItems.forEach(item => {
+    item.addEventListener('click', () => {
+        categoryItems.forEach(i => i.classList.remove('selected'));
+        item.classList.add('selected');
+        expenseCategoryInput.value = item.dataset.category;
+    });
 });
 
-function initializeEventListeners() {
-    // Tab Navigation
-    document.querySelectorAll('.nav-tabs a').forEach(tab => {
-        tab.addEventListener('click', function(e) {
-            e.preventDefault();
-            
-            // Remove active class from all tabs and content
-            document.querySelectorAll('.nav-tabs a').forEach(t => t.classList.remove('active'));
-            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-            
-            // Add active class to clicked tab and corresponding content
-            this.classList.add('active');
-            const tabId = this.getAttribute('data-tab');
-            document.getElementById(tabId).classList.add('active');
-            
-            // If switching to view expenses, update the display
-            if (tabId === 'view-expenses') {
-                updateExpenseDisplay();
+// Tab navigation
+navTabs.forEach(tab => {
+    tab.addEventListener('click', (e) => {
+        e.preventDefault();
+        const targetTab = tab.dataset.tab;
+        
+        // Update active tab
+        navTabs.forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+        
+        // Show target tab content
+        tabContents.forEach(content => {
+            content.classList.remove('active');
+            if (content.id === targetTab) {
+                content.classList.add('active');
             }
         });
+        
+        // If viewing expenses, update the display
+        if (targetTab === 'view-expenses') {
+            updateExpenseDisplay();
+        }
     });
+});
 
-    // Category Selection
-    document.querySelectorAll('.category-item').forEach(item => {
-        item.addEventListener('click', function() {
-            document.querySelectorAll('.category-item').forEach(i => i.classList.remove('active'));
-            this.classList.add('active');
-            document.getElementById('expense-category').value = this.getAttribute('data-category');
-        });
+// Time filter selection
+timeFilters.forEach(filter => {
+    filter.addEventListener('click', () => {
+        timeFilters.forEach(f => f.classList.remove('active'));
+        filter.classList.add('active');
+        updateExpenseDisplay();
     });
+});
 
-    // Time Filter Selection
-    document.querySelectorAll('.time-filter').forEach(filter => {
-        filter.addEventListener('click', function() {
-            document.querySelectorAll('.time-filter').forEach(f => f.classList.remove('active'));
-            this.classList.add('active');
-            updateChart(this.getAttribute('data-period'));
-        });
-    });
-
-    // Form Submission
-    document.getElementById('expense-form').addEventListener('submit', function(e) {
-        e.preventDefault();
-        handleFormSubmission();
-    });
+// Load expenses from localStorage
+function loadExpenses() {
+    const expenses = localStorage.getItem('budgetBuddyExpenses');
+    return expenses ? JSON.parse(expenses) : [];
 }
 
-function setDefaultDate() {
-    document.getElementById('expense-date').valueAsDate = new Date();
+// Save expenses to localStorage
+function saveExpenses(expenses) {
+    localStorage.setItem('budgetBuddyExpenses', JSON.stringify(expenses));
 }
 
-function handleFormSubmission() {
-    // Get form values
-    const name = document.getElementById('expense-name').value;
-    const category = document.getElementById('expense-category').value;
-    const amount = parseFloat(document.getElementById('expense-amount').value);
-    const date = document.getElementById('expense-date').value;
-    const notes = document.getElementById('expense-notes').value;
+// Add new expense
+expenseForm.addEventListener('submit', (e) => {
+    e.preventDefault();
     
-    // Validate category selection
-    if (!category) {
-        alert('Please select a category for your expense');
+    if (!expenseCategoryInput.value) {
+        alert('Please select a category');
         return;
     }
     
-    // Create new expense object
     const newExpense = {
-        id: expenses.length > 0 ? Math.max(...expenses.map(e => e.id)) + 1 : 1,
-        name,
-        category,
-        amount,
-        date,
-        notes
+        id: Date.now(),
+        name: expenseNameInput.value,
+        category: expenseCategoryInput.value,
+        amount: parseFloat(expenseAmountInput.value),
+        date: expenseDateInput.value,
+        notes: expenseNotesInput.value
     };
     
-    // Add to expenses array
+    const expenses = loadExpenses();
     expenses.push(newExpense);
-    
-    // Save to localStorage
-    localStorage.setItem('expenses', JSON.stringify(expenses));
-    
-    // Show success message
-    alert(`Expense Added Successfully!\n\nName: ${name}\nCategory: ${category}\nAmount: $${amount.toFixed(2)}\nDate: ${date}`);
+    saveExpenses(expenses);
     
     // Reset form
-    document.getElementById('expense-form').reset();
-    document.querySelectorAll('.category-item').forEach(i => i.classList.remove('active'));
-    document.getElementById('expense-category').value = '';
+    expenseForm.reset();
+    expenseDateInput.valueAsDate = new Date();
+    categoryItems.forEach(item => item.classList.remove('selected'));
+    expenseCategoryInput.value = '';
     
-    // Update the view if we're on the expenses tab
+    alert('Expense added successfully!');
+    
+    // If on view expenses tab, update display
     if (document.getElementById('view-expenses').classList.contains('active')) {
+        updateExpenseDisplay();
+    }
+});
+
+// Delete expense
+function deleteExpense(id) {
+    if (confirm('Are you sure you want to delete this expense?')) {
+        const expenses = loadExpenses();
+        const updatedExpenses = expenses.filter(expense => expense.id !== id);
+        saveExpenses(updatedExpenses);
         updateExpenseDisplay();
     }
 }
 
-function initChart() {
-    const ctx = document.getElementById('expense-chart').getContext('2d');
-    expenseChart = new Chart(ctx, {
-        type: 'pie',
-        data: getChartData('monthly'),
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                legend: {
-                    position: 'right',
-                },
-                title: {
-                    display: true,
-                    text: 'Expense Distribution (Monthly)'
-                }
-            }
-        }
-    });
-}
-
-function getChartData(period) {
-    // Filter expenses based on period
-    const filteredExpenses = filterExpensesByPeriod(period);
+// Update expense display
+function updateExpenseDisplay() {
+    const expenses = loadExpenses();
     
-    // Calculate totals by category
-    const categories = ['food', 'transport', 'entertainment', 'shopping', 'bills', 'health', 'other'];
-    const data = categories.map(category => {
-        return filteredExpenses
-            .filter(expense => expense.category === category)
-            .reduce((sum, expense) => sum + expense.amount, 0);
-    });
-    
-    return {
-        labels: ['Food', 'Transport', 'Entertainment', 'Shopping', 'Bills', 'Health', 'Other'],
-        datasets: [{
-            data: data,
-            backgroundColor: [
-                '#ff9f1c', '#2ec4b6', '#e71d36', 
-                '#9b5de5', '#00bbf9', '#06d6a0', '#6c757d'
-            ],
-            borderWidth: 1
-        }]
-    };
-}
-
-function filterExpensesByPeriod(period) {
-    const now = new Date();
-    let filteredExpenses = [...expenses];
-    
-    if (period === 'daily') {
-        const today = now.toISOString().split('T')[0];
-        filteredExpenses = expenses.filter(expense => expense.date === today);
-    } else if (period === 'weekly') {
-        const oneWeekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
-        filteredExpenses = expenses.filter(expense => new Date(expense.date) >= oneWeekAgo);
-    } else if (period === 'monthly') {
-        const oneMonthAgo = new Date(now.getFullYear(), now.getMonth() - 1, now.getDate());
-        filteredExpenses = expenses.filter(expense => new Date(expense.date) >= oneMonthAgo);
-    } else if (period === 'yearly') {
-        const oneYearAgo = new Date(now.getFullYear() - 1, now.getMonth(), now.getDate());
-        filteredExpenses = expenses.filter(expense => new Date(expense.date) >= oneYearAgo);
+    // Update table
+    if (expenses.length === 0) {
+        expenseTableBody.innerHTML = '';
+        noExpensesMessage.style.display = 'block';
+    } else {
+        noExpensesMessage.style.display = 'none';
+        
+        // Sort expenses by date (newest first)
+        expenses.sort((a, b) => new Date(b.date) - new Date(a.date));
+        
+        let tableHTML = '';
+        expenses.forEach(expense => {
+            const date = new Date(expense.date);
+            const formattedDate = date.toLocaleDateString('en-IN');
+            
+            tableHTML += `
+                <tr>
+                    <td>${formattedDate}</td>
+                    <td>${expense.name}</td>
+                    <td>${expense.category.charAt(0).toUpperCase() + expense.category.slice(1)}</td>
+                    <td class="rupee-symbol">${formatAmount(expense.amount)}</td>
+                    <td><span class="delete-btn" onclick="deleteExpense(${expense.id})">Delete</span></td>
+                </tr>
+            `;
+        });
+        
+        expenseTableBody.innerHTML = tableHTML;
     }
     
-    return filteredExpenses;
+    // Update stats
+    updateStats(expenses);
+    
+    // Update chart
+    updateChart(expenses);
 }
 
-function updateChart(period) {
-    // Update chart data based on period
-    expenseChart.data = getChartData(period);
+// Update statistics
+function updateStats(expenses) {
+    if (expenses.length === 0) {
+        totalSpentElement.textContent = formatAmount(0);
+        avgDailyElement.textContent = formatAmount(0);
+        biggestCategoryElement.textContent = 'None';
+        return;
+    }
     
-    // Update chart title
-    const titles = {
-        daily: "Today's Expenses",
-        weekly: "This Week's Expenses",
-        monthly: "This Month's Expenses",
-        yearly: "This Year's Expenses"
-    };
+    // Current month expenses
+    const now = new Date();
+    const currentMonth = now.getMonth();
+    const currentYear = now.getFullYear();
     
-    expenseChart.options.plugins.title.text = titles[period];
-    expenseChart.update();
+    const monthExpenses = expenses.filter(expense => {
+        const expenseDate = new Date(expense.date);
+        return expenseDate.getMonth() === currentMonth && 
+               expenseDate.getFullYear() === currentYear;
+    });
     
-    // Update statistics
-    updateStatistics(period);
-}
-
-function updateStatistics(period) {
-    const filteredExpenses = filterExpensesByPeriod(period);
+    // Total spent this month
+    const totalSpent = monthExpenses.reduce((sum, expense) => sum + expense.amount, 0);
+    totalSpentElement.textContent = formatAmount(totalSpent);
     
-    // Calculate statistics
-    const totalSpent = filteredExpenses.reduce((sum, expense) => sum + expense.amount, 0);
+    // Average daily spending
+    const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
+    const avgDaily = totalSpent / daysInMonth;
+    avgDailyElement.textContent = formatAmount(avgDaily);
     
-    // Calculate average daily spending
-    let days = 1;
-    if (period === 'weekly') days = 7;
-    else if (period === 'monthly') days = 30;
-    else if (period === 'yearly') days = 365;
-    
-    const avgDailySpending = totalSpent / days;
-    
-    // Find biggest category
+    // Biggest expense category
     const categoryTotals = {};
-    filteredExpenses.forEach(expense => {
-        categoryTotals[expense.category] = (categoryTotals[expense.category] || 0) + expense.amount;
+    monthExpenses.forEach(expense => {
+        if (categoryTotals[expense.category]) {
+            categoryTotals[expense.category] += expense.amount;
+        } else {
+            categoryTotals[expense.category] = expense.amount;
+        }
     });
     
     let biggestCategory = 'None';
@@ -225,90 +208,88 @@ function updateStatistics(period) {
     for (const category in categoryTotals) {
         if (categoryTotals[category] > maxAmount) {
             maxAmount = categoryTotals[category];
-            biggestCategory = category;
+            biggestCategory = category.charAt(0).toUpperCase() + category.slice(1);
         }
     }
     
-    // Update DOM elements
-    document.getElementById('total-spent').textContent = `$${totalSpent.toFixed(2)}`;
-    document.getElementById('avg-daily').textContent = `$${avgDailySpending.toFixed(2)}`;
-    document.getElementById('biggest-category').textContent = 
-        biggestCategory.charAt(0).toUpperCase() + biggestCategory.slice(1);
+    biggestCategoryElement.textContent = biggestCategory;
 }
 
-function updateExpenseTable() {
-    const tableBody = document.getElementById('expense-table-body');
-    const noExpensesMessage = document.getElementById('no-expenses-message');
-    tableBody.innerHTML = '';
+// Update chart
+function updateChart(expenses) {
+    const ctx = document.getElementById('expense-chart').getContext('2d');
     
-    // Show message if no expenses
-    if (expenses.length === 0) {
-        noExpensesMessage.style.display = 'block';
-        return;
-    } else {
-        noExpensesMessage.style.display = 'none';
+    // Get active time filter
+    const activeFilter = document.querySelector('.time-filter.active');
+    const period = activeFilter ? activeFilter.dataset.period : 'monthly';
+    
+    // Prepare data based on selected period
+    let labels = [];
+    let data = [];
+    
+    // For demo purposes, we'll create some sample data
+    // In a real app, you would process the actual expenses
+    if (period === 'daily') {
+        labels = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+        data = [120, 190, 300, 500, 200, 300, 450];
+    } else if (period === 'weekly') {
+        labels = ['Week 1', 'Week 2', 'Week 3', 'Week 4'];
+        data = [1200, 1900, 1500, 2100];
+    } else if (period === 'monthly') {
+        labels = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'];
+        data = [5000, 7000, 6500, 8000, 7500, 9000];
+    } else if (period === 'yearly') {
+        labels = ['2019', '2020', '2021', '2022', '2023'];
+        data = [45000, 52000, 58000, 62000, 70000];
     }
     
-    // Sort expenses by date (newest first)
-    const sortedExpenses = [...expenses].sort((a, b) => new Date(b.date) - new Date(a.date));
+    // Format data with rupee symbol for tooltips
+    const formattedData = data.map(value => formatAmount(value));
     
-    // Add expenses to table
-    sortedExpenses.forEach(expense => {
-        const row = document.createElement('tr');
-        
-        const dateCell = document.createElement('td');
-        dateCell.textContent = expense.date;
-        
-        const nameCell = document.createElement('td');
-        nameCell.textContent = expense.name;
-        
-        const categoryCell = document.createElement('td');
-        const categoryBadge = document.createElement('span');
-        categoryBadge.className = `category-badge ${expense.category}`;
-        categoryBadge.textContent = expense.category.charAt(0).toUpperCase() + expense.category.slice(1);
-        categoryCell.appendChild(categoryBadge);
-        
-        const amountCell = document.createElement('td');
-        amountCell.textContent = `$${expense.amount.toFixed(2)}`;
-        
-        const actionCell = document.createElement('td');
-        const deleteButton = document.createElement('button');
-        deleteButton.className = 'delete-btn';
-        deleteButton.innerHTML = '🗑️';
-        deleteButton.title = 'Delete this expense';
-        deleteButton.addEventListener('click', function() {
-            deleteExpense(expense.id);
-        });
-        actionCell.appendChild(deleteButton);
-        
-        row.appendChild(dateCell);
-        row.appendChild(nameCell);
-        row.appendChild(categoryCell);
-        row.appendChild(amountCell);
-        row.appendChild(actionCell);
-        
-        tableBody.appendChild(row);
+    // Create or update chart
+    if (window.expenseChart) {
+        window.expenseChart.destroy();
+    }
+    
+    window.expenseChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: 'Expenses',
+                data: data,
+                backgroundColor: '#4CAF50',
+                borderColor: '#2E7D32',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        callback: function(value) {
+                            return formatAmount(value);
+                        }
+                    }
+                }
+            },
+            plugins: {
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            return formatAmount(context.parsed.y);
+                        }
+                    }
+                }
+            }
+        }
     });
 }
 
-function deleteExpense(id) {
-    if (confirm('Are you sure you want to delete this expense?')) {
-        // Remove expense from array
-        expenses = expenses.filter(expense => expense.id !== id);
-        
-        // Save to localStorage
-        localStorage.setItem('expenses', JSON.stringify(expenses));
-        
-        // Update display
-        updateExpenseDisplay();
-        
-        // Show confirmation message
-        alert('Expense deleted successfully!');
-    }
-}
-
-function updateExpenseDisplay() {
-    updateExpenseTable();
-    updateStatistics('monthly');
-    updateChart('monthly');
-}
+// Initialize the app
+document.addEventListener('DOMContentLoaded', () => {
+    updateExpenseDisplay();
+});
