@@ -3,1209 +3,191 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LifeSphere - Your All-in-One Life Management Hub</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <title>BudgetBuddy</title>
     <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
     <header>
         <div class="container">
             <div class="header-content">
                 <div class="logo">
-                    <i>🌐</i> LifeSphere
+                    <i>💰</i> BudgetBuddy
                 </div>
-                <button id="notification-btn" class="btn-notification">Enable Notifications</button>
             </div>
         </div>
     </header>
 
     <div class="container">
         <div class="main-content">
-            <div class="sidebar">
-                <h3><i>🧭</i> Navigation</h3>
+            <aside class="sidebar">
+                <h3><i>📊</i> Navigation</h3>
                 <ul class="nav-tabs">
-                    <li><a href="#" class="active" data-tab="dashboard"><i>📊</i> Dashboard</a></li>
-                    <li><a href="#" data-tab="water"><i>💧</i> Water Tracker</a></li>
-                    <li><a href="#" data-tab="workout"><i>💪</i> Workout Logger</a></li>
-                    <li><a href="#" data-tab="medication"><i>💊</i> Medication</a></li>
-                    <li><a href="#" data-tab="meals"><i>🍽️</i> Meal Planner</a></li>
-                    <li><a href="#" data-tab="screen"><i>📱</i> Screen Time</a></li>
-                    <li><a href="#" data-tab="sleep"><i>😴</i> Sleep Tracker</a></li>
-                    <li><a href="#" data-tab="lifeloop"><i>🔄</i> LifeLoop</a></li>
-                    <li><a href="#" data-tab="taskforge"><i>⚒️</i> TaskForge</a></li>
-                    <li><a href="#" data-tab="eduplan"><i>🎓</i> EduPlan</a></li>
+                    <li><a href="#" class="active" data-tab="add-expense"><i>➕</i> Add Expense</a></li>
+                    <li><a href="#" data-tab="view-expenses"><i>📋</i> View Expenses</a></li>
                 </ul>
-            </div>
+            </aside>
 
-            <div class="content-area">
-                <!-- Dashboard Tab -->
-                <div id="dashboard" class="tab-content active">
-                    <h2 class="section-title">Life Management Dashboard</h2>
+            <main class="content-area">
+                <div id="add-expense" class="tab-content active">
+                    <h2 class="section-title">Add New Expense</h2>
                     
-                    <!-- Sleep Schedule at the top -->
-                    <div class="sleep-schedule">
-                        <h3 class="section-title">Sleep Schedule</h3>
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label for="wake-up-time">Wake Up Time</label>
-                                <input type="time" id="wake-up-time" class="form-control">
-                            </div>
-                            <div class="form-group">
-                                <label for="bedtime">Bedtime</label>
-                                <input type="time" id="bedtime" class="form-control">
+                    <form id="expense-form">
+                        <div class="form-group">
+                            <label for="expense-name">Expense Name</label>
+                            <input type="text" id="expense-name" class="form-control" placeholder="Enter expense name" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="expense-category">Category</label>
+                            <input type="hidden" id="expense-category">
+                            <input type="hidden" id="expense-subcategory">
+                            
+                            <div class="category-selection">
+                                <div id="main-categories" class="expense-categories">
+                                    <div class="category-item" data-category="food">
+                                        <div class="category-icon">🍕</div>
+                                        <div>Food</div>
+                                    </div>
+                                    <div class="category-item" data-category="transport">
+                                        <div class="category-icon">🚗</div>
+                                        <div>Transport</div>
+                                    </div>
+                                    <div class="category-item" data-category="entertainment">
+                                        <div class="category-icon">🎬</div>
+                                        <div>Entertainment</div>
+                                    </div>
+                                    <div class="category-item" data-category="shopping">
+                                        <div class="category-icon">🛍️</div>
+                                        <div>Shopping</div>
+                                    </div>
+                                    <div class="category-item" data-category="bills">
+                                        <div class="category-icon">📄</div>
+                                        <div>Bills</div>
+                                    </div>
+                                    <div class="category-item" data-category="health">
+                                        <div class="category-icon">🏥</div>
+                                        <div>Health</div>
+                                    </div>
+                                    <div class="category-item" data-category="other">
+                                        <div class="category-icon">📦</div>
+                                        <div>Other</div>
+                                    </div>
+                                </div>
+                                
+                                <div id="sub-categories" style="display: none;"></div>
                             </div>
                         </div>
-                        <button id="save-sleep-schedule" class="btn-primary">Save Schedule</button>
-                    </div>
+                        
+                        <div class="form-group">
+                            <label for="expense-amount">Amount</label>
+                            <input type="number" id="expense-amount" class="form-control" placeholder="Enter amount" step="0.01" min="0" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="expense-date">Date</label>
+                            <input type="date" id="expense-date" class="form-control" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="expense-notes">Notes (Optional)</label>
+                            <textarea id="expense-notes" class="form-control" placeholder="Add any additional notes" rows="3"></textarea>
+                        </div>
+                        
+                        <button type="submit" class="btn btn-primary">Add Expense</button>
+                    </form>
+                </div>
+
+                <div id="view-expenses" class="tab-content">
+                    <h2 class="section-title">Your Expenses</h2>
                     
                     <div class="stats-container">
                         <div class="stat-card">
-                            <h3>Water Intake</h3>
-                            <div class="value" id="water-today">0/8 glasses</div>
-                            <div class="progress-bar">
-                                <div class="progress" id="water-progress" style="width: 0%"></div>
-                            </div>
+                            <h3>Total Spent</h3>
+                            <div class="value rupee-symbol" id="total-spent">₹0.00</div>
+                            <select class="period-select" id="total-period">
+                                <option value="daily">Today</option>
+                                <option value="weekly">This Week</option>
+                                <option value="monthly" selected>This Month</option>
+                                <option value="yearly">This Year</option>
+                            </select>
                         </div>
+                        
                         <div class="stat-card">
-                            <h3>Workouts This Week</h3>
-                            <div class="value" id="workouts-week">0 workouts</div>
+                            <h3>Average Daily</h3>
+                            <div class="value rupee-symbol" id="avg-daily">₹0.00</div>
+                            <select class="period-select" id="avg-period">
+                                <option value="daily">Today</option>
+                                <option value="weekly">This Week</option>
+                                <option value="monthly" selected>This Month</option>
+                                <option value="yearly">This Year</option>
+                            </select>
                         </div>
+                        
                         <div class="stat-card">
-                            <h3>Medication Status</h3>
-                            <div class="value" id="meds-today">0/0 taken</div>
-                        </div>
-                        <div class="stat-card">
-                            <h3>Screen Time Today</h3>
-                            <div class="value" id="screen-today">0h 0m</div>
-                        </div>
-                        <div class="stat-card">
-                            <h3>Sleep Last Night</h3>
-                            <div class="value" id="sleep-last">0h 0m</div>
-                        </div>
-                        <div class="stat-card">
-                            <h3>Tasks Completed</h3>
-                            <div class="value" id="tasks-today">0/0</div>
-                            <div class="progress-bar">
-                                <div class="progress" id="tasks-progress" style="width: 0%"></div>
-                            </div>
+                            <h3>Biggest Expense</h3>
+                            <div class="value" id="biggest-category">None</div>
+                            <select class="period-select" id="biggest-period">
+                                <option value="daily">Today</option>
+                                <option value="weekly">This Week</option>
+                                <option value="monthly" selected>This Month</option>
+                                <option value="yearly">This Year</option>
+                            </select>
                         </div>
                     </div>
                     
-                    <h3 class="section-title">Today's Overview</h3>
-                    <div class="today-overview">
-                        <div class="overview-item">
-                            <h4>Water Intake</h4>
-                            <div class="water-cups">
-                                <div class="cup" data-cup="1">1</div>
-                                <div class="cup" data-cup="2">2</div>
-                                <div class="cup" data-cup="3">3</div>
-                                <div class="cup" data-cup="4">4</div>
-                                <div class="cup" data-cup="5">5</div>
-                                <div class="cup" data-cup="6">6</div>
-                                <div class="cup" data-cup="7">7</div>
-                                <div class="cup" data-cup="8">8</div>
-                            </div>
-                            <button id="add-water" class="btn-primary">Add Glass</button>
+                    <div class="chart-controls">
+                        <div class="chart-type-selector">
+                            <button class="chart-type-btn active" data-chart-type="pie">Pie Chart</button>
+                            <button class="chart-type-btn" data-chart-type="bar">Bar Chart</button>
                         </div>
                         
-                        <div class="overview-item">
-                            <h4>Today's Tasks</h4>
-                            <div id="today-tasks-list">
-                                <!-- Tasks will be populated here -->
-                            </div>
+                        <div class="time-filters">
+                            <div class="time-filter active" data-period="daily">Daily</div>
+                            <div class="time-filter" data-period="weekly">Weekly</div>
+                            <div class="time-filter" data-period="monthly">Monthly</div>
+                            <div class="time-filter" data-period="yearly">Yearly</div>
                         </div>
                     </div>
                     
-                    <h3 class="section-title">Upcoming Events</h3>
-                    <div class="upcoming-container">
-                        <div class="upcoming-columns">
-                            <div class="upcoming-column">
-                                <h4>Today's Classes</h4>
-                                <div id="today-classes-list">
-                                    <!-- Today's classes will be populated here -->
-                                </div>
-                            </div>
-                            <div class="upcoming-column">
-                                <h4>Upcoming Exams</h4>
-                                <div id="upcoming-exams-list">
-                                    <!-- Upcoming exams will be populated here -->
-                                </div>
-                            </div>
-                            <div class="upcoming-column">
-                                <h4>Pending Tasks</h4>
-                                <div id="pending-tasks-list">
-                                    <!-- Pending tasks will be populated here -->
-                                </div>
-                            </div>
+                    <div class="chart-container">
+                        <canvas id="expense-chart"></canvas>
+                    </div>
+                    
+                    <h3 class="section-title">Recent Expenses</h3>
+                    
+                    <div class="table-container">
+                        <table class="expense-table">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Name</th>
+                                    <th>Category</th>
+                                    <th>Subcategory</th>
+                                    <th>Amount</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="expense-table-body">
+                                <!-- Expenses will be populated here by JavaScript -->
+                            </tbody>
+                        </table>
+                        <div id="no-expenses-message" class="no-expenses">
+                            No expenses recorded yet! Add your first expense in the "Add Expense" tab!
                         </div>
                     </div>
                 </div>
-
-                <!-- Water Tracker Tab -->
-                <div id="water" class="tab-content">
-                    <h2 class="section-title">Water Intake Tracker</h2>
-                    <div class="water-container">
-                        <div class="water-goal">
-                            <h3>Daily Water Goal</h3>
-                            <div class="goal-setter">
-                                <button class="btn-goal" id="decrease-goal">-</button>
-                                <span id="water-goal">8</span> glasses
-                                <button class="btn-goal" id="increase-goal">+</button>
-                            </div>
-                        </div>
-                        
-                        <div class="water-visual">
-                            <div class="water-bottle">
-                                <div class="water-fill" id="water-fill"></div>
-                            </div>
-                            <div class="water-stats">
-                                <div class="water-consumed">
-                                    <span id="water-consumed">0</span> / <span id="water-target">8</span> glasses
-                                </div>
-                                <div class="water-percentage" id="water-percentage">0%</div>
-                            </div>
-                        </div>
-                        
-                        <div class="water-controls">
-                            <button id="add-glass" class="btn-primary">Add Glass (250ml)</button>
-                            <button id="reset-water" class="btn-secondary">Reset Today</button>
-                        </div>
-                        
-                        <div class="water-history">
-                            <h3>Water Intake History</h3>
-                            <div class="history-container">
-                                <table class="history-table">
-                                    <thead>
-                                        <tr>
-                                            <th>Date</th>
-                                            <th>Glasses</th>
-                                            <th>Percentage</th>
-                                            <th>Action</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="water-history-body">
-                                        <!-- Water history will be populated here -->
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Workout Logger Tab -->
-                <div id="workout" class="tab-content">
-                    <h2 class="section-title">Workout Logger</h2>
-                    <div class="workout-container">
-                        <div class="workout-form">
-                            <h3>Log New Workout</h3>
-                            <form id="workout-form">
-                                <div class="form-group">
-                                    <label for="workout-type">Workout Type</label>
-                                    <select id="workout-type" class="form-control" required>
-                                        <option value="">Select type</option>
-                                        <option value="cardio">Cardio</option>
-                                        <option value="strength">Strength Training</option>
-                                        <option value="yoga">Yoga/Pilates</option>
-                                        <option value="sports">Sports</option>
-                                        <option value="other">Other</option>
-                                    </select>
-                                </div>
-                                
-                                <div class="form-group">
-                                    <label for="workout-name">Workout Name</label>
-                                    <input type="text" id="workout-name" class="form-control" placeholder="e.g., Morning Run, Gym Session" required>
-                                </div>
-                                
-                                <div class="form-group">
-                                    <label for="workout-duration">Duration (minutes)</label>
-                                    <input type="number" id="workout-duration" class="form-control" min="1" required>
-                                </div>
-                                
-                                <div class="form-group">
-                                    <label for="workout-calories">Calories Burned (optional)</label>
-                                    <input type="number" id="workout-calories" class="form-control" min="0">
-                                </div>
-                                
-                                <div class="form-group">
-                                    <label for="workout-notes">Notes</label>
-                                    <textarea id="workout-notes" class="form-control" rows="3" placeholder="Any additional notes about your workout"></textarea>
-                                </div>
-                                
-                                <button type="submit" class="btn-primary">Log Workout</button>
-                            </form>
-                        </div>
-                        
-                        <div class="workout-history">
-                            <h3>Workout History</h3>
-                            <div class="history-filters">
-                                <select id="workout-period" class="form-control">
-                                    <option value="all">All Time</option>
-                                    <option value="week">This Week</option>
-                                    <option value="month">This Month</option>
-                                </select>
-                            </div>
-                            <div class="workout-stats">
-                                <div class="workout-stat">
-                                    <h4>Total Workouts</h4>
-                                    <div id="total-workouts">0</div>
-                                </div>
-                                <div class="workout-stat">
-                                    <h4>Total Duration</h4>
-                                    <div id="total-duration">0 min</div>
-                                </div>
-                                <div class="workout-stat">
-                                    <h4>Total Calories</h4>
-                                    <div id="total-calories">0</div>
-                                </div>
-                            </div>
-                            <div class="workout-list" id="workout-list">
-                                <!-- Workouts will be populated here -->
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Medication Tab -->
-                <div id="medication" class="tab-content">
-                    <h2 class="section-title">Medication Reminder</h2>
-                    <div class="medication-container">
-                        <div class="medication-form">
-                            <h3>Add Medication</h3>
-                            <form id="medication-form">
-                                <div class="form-group">
-                                    <label for="med-name">Medication Name</label>
-                                    <input type="text" id="med-name" class="form-control" placeholder="e.g., Vitamin D, Aspirin" required>
-                                </div>
-                                
-                                <div class="form-group">
-                                    <label for="med-dosage">Dosage</label>
-                                    <input type="text" id="med-dosage" class="form-control" placeholder="e.g., 500mg, 1 tablet" required>
-                                </div>
-                                
-                                <div class="form-group">
-                                    <label for="med-frequency">Frequency</label>
-                                    <select id="med-frequency" class="form-control" required>
-                                        <option value="once">Once Daily</option>
-                                        <option value="twice">Twice Daily</option>
-                                        <option value="thrice">Three Times Daily</option>
-                                        <option value="weekly">Weekly</option>
-                                        <option value="as-needed">As Needed</option>
-                                    </select>
-                                </div>
-                                
-                                <div class="form-group">
-                                    <label for="med-times">Times</label>
-                                    <div id="med-times">
-                                        <input type="time" class="form-control med-time" required>
-                                    </div>
-                                    <button type="button" id="add-time" class="btn-secondary">Add Another Time</button>
-                                </div>
-                                
-                                <div class="form-group">
-                                    <label for="med-notes">Notes (optional)</label>
-                                    <textarea id="med-notes" class="form-control" rows="3" placeholder="Any additional instructions"></textarea>
-                                </div>
-
-                                <div class="form-group">
-                                    <button type="button" id="ringtone-access" class="btn-primary">Allow Ringtone Access</button>
-                                    <small>Required for medication alarms</small>
-                                </div>
-                                
-                                <button type="submit" class="btn-primary">Add Medication</button>
-                            </form>
-                        </div>
-                        
-                        <div class="medication-list">
-                            <h3>Your Medications</h3>
-                            <div class="today-meds">
-                                <h4>Today's Schedule</h4>
-                                <div id="today-meds-list">
-                                    <!-- Today's medications will be populated here -->
-                                </div>
-                            </div>
-                            
-                            <div class="all-meds">
-                                <h4>All Medications</h4>
-                                <div id="meds-list">
-                                    <!-- All medications will be populated here -->
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Meal Planner Tab -->
-                <div id="meals" class="tab-content">
-                    <h2 class="section-title">Meal Planner</h2>
-                    <div class="meals-container">
-                        <div class="meal-plan-form">
-                            <h3>Plan Your Meals</h3>
-                            <form id="meal-plan-form">
-                                <div class="form-group">
-                                    <label for="meal-date">Date</label>
-                                    <input type="date" id="meal-date" class="form-control" required>
-                                </div>
-                                
-                                <div class="form-group">
-                                    <label for="meal-type">Meal Type</label>
-                                    <select id="meal-type" class="form-control" required>
-                                        <option value="breakfast">Breakfast</option>
-                                        <option value="lunch">Lunch</option>
-                                        <option value="dinner">Dinner</option>
-                                        <option value="snack">Snack</option>
-                                    </select>
-                                </div>
-                                
-                                <div class="form-group">
-                                    <label for="meal-name">Meal Name</label>
-                                    <input type="text" id="meal-name" class="form-control" placeholder="e.g., Oatmeal, Grilled Chicken Salad" required>
-                                </div>
-                                
-                                <div class="form-group">
-                                    <label for="meal-time">Meal Time</label>
-                                    <input type="time" id="meal-time" class="form-control" required>
-                                </div>
-                                
-                                <div class="form-group">
-                                    <label for="meal-calories">Calories (optional)</label>
-                                    <input type="number" id="meal-calories" class="form-control" min="0">
-                                </div>
-                                
-                                <div class="form-group">
-                                    <label for="meal-recipe">Recipe/Ingredients (optional)</label>
-                                    <textarea id="meal-recipe" class="form-control" rows="4" placeholder="List ingredients or recipe steps"></textarea>
-                                </div>
-                                
-                                <button type="submit" class="btn-primary">Add to Plan</button>
-                            </form>
-                        </div>
-                        
-                        <div class="meal-plan">
-                            <h3>Weekly Meal Plan</h3>
-                            <div class="week-navigation">
-                                <button id="prev-week" class="btn-secondary">Previous Week</button>
-                                <span id="week-display">Current Week</span>
-                                <button id="next-week" class="btn-secondary">Next Week</button>
-                            </div>
-                            
-                            <div class="weekly-meal-plan-popup-container">
-                                <div class="weekly-meal-plan-popup" id="weekly-meal-plan">
-                                    <!-- Weekly meal plan will be populated here -->
-                                </div>
-                            </div>
-                            
-                            <div class="meal-stats">
-                                <div class="meal-stat">
-                                    <h4>Average Daily Calories</h4>
-                                    <div id="avg-calories">0</div>
-                                </div>
-                                <div class="meal-stat">
-                                    <h4>Planned Meals This Week</h4>
-                                    <div id="planned-meals">0</div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Screen Time Tab -->
-                <div id="screen" class="tab-content">
-                    <h2 class="section-title">Screen Time Tracker</h2>
-                    <div class="screen-container">
-                        <div class="screen-today">
-                            <h3>Today's Screen Time</h3>
-                            <div class="screen-visual">
-                                <div class="mobile-screen-time">
-                                    <div class="time-display-mobile">
-                                        <div class="time-unit-mobile">
-                                            <div class="time-value" id="mobile-hours">00</div>
-                                            <div class="time-label">HOURS</div>
-                                        </div>
-                                        <div class="time-separator">:</div>
-                                        <div class="time-unit-mobile">
-                                            <div class="time-value" id="mobile-minutes">00</div>
-                                            <div class="time-label">MINUTES</div>
-                                        </div>
-                                        <div class="time-separator">:</div>
-                                        <div class="time-unit-mobile">
-                                            <div class="time-value" id="mobile-seconds">00</div>
-                                            <div class="time-label">SECONDS</div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            <div class="screen-controls">
-                                <button id="start-tracking" class="btn-primary">Start Tracking</button>
-                                <button id="stop-tracking" class="btn-secondary" disabled>Stop Tracking</button>
-                                <button id="add-manual" class="btn-secondary">Add Manually</button>
-                            </div>
-                            
-                            <div class="screen-goal">
-                                <h4>Daily Screen Time Goal</h4>
-                                <div class="goal-setter">
-                                    <input type="number" id="screen-goal" class="form-control" min="1" max="24" value="4">
-                                    <span>hours</span>
-                                </div>
-                                <div class="progress-bar">
-                                    <div class="progress" id="screen-progress" style="width: 0%"></div>
-                                </div>
-                                <div id="screen-goal-text">0% of daily goal</div>
-                            </div>
-                        </div>
-                        
-                        <div class="screen-history">
-                            <h3>Screen Time History</h3>
-                            <div class="history-filters">
-                                <select id="screen-period" class="form-control">
-                                    <option value="week">This Week</option>
-                                    <option value="month">This Month</option>
-                                    <option value="all">All Time</option>
-                                </select>
-                            </div>
-                            
-                            <div class="history-container">
-                                <table class="history-table">
-                                    <thead>
-                                        <tr>
-                                            <th>Date</th>
-                                            <th>Screen Time</th>
-                                            <th>Goal Progress</th>
-                                            <th>Action</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="screen-history-body">
-                                        <!-- Screen time history will be populated here -->
-                                    </tbody>
-                                </table>
-                                <button id="reset-screen" class="btn-secondary">Reset Today</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Sleep Tracker Tab -->
-                <div id="sleep" class="tab-content">
-                    <h2 class="section-title">Sleep Tracker</h2>
-                    <div class="sleep-container">
-                        <div class="sleep-log">
-                            <h3>Log Your Sleep</h3>
-                            <form id="sleep-form">
-                                <div class="form-group">
-                                    <label for="sleep-date">Date</label>
-                                    <input type="date" id="sleep-date" class="form-control" required>
-                                </div>
-                                
-                                <div class="form-group">
-                                    <label for="bedtime">Bedtime</label>
-                                    <input type="time" id="bedtime" class="form-control" required>
-                                </div>
-                                
-                                <div class="form-group">
-                                    <label for="waketime">Wake Time</label>
-                                    <input type="time" id="waketime" class="form-control" required>
-                                </div>
-                                
-                                <div class="form-group">
-                                    <label for="sleep-quality">Sleep Quality</label>
-                                    <div class="quality-rating">
-                                        <div class="quality-option" data-quality="1">😴</div>
-                                        <div class="quality-option" data-quality="2">😔</div>
-                                        <div class="quality-option" data-quality="3">😐</div>
-                                        <div class="quality-option" data-quality="4">😊</div>
-                                        <div class="quality-option" data-quality="5">😄</div>
-                                    </div>
-                                    <input type="hidden" id="sleep-quality-value" required>
-                                </div>
-                                
-                                <div class="form-group">
-                                    <label for="sleep-notes">Notes (optional)</label>
-                                    <textarea id="sleep-notes" class="form-control" rows="3" placeholder="Any factors affecting your sleep?"></textarea>
-                                </div>
-                                
-                                <button type="submit" class="btn-primary">Log Sleep</button>
-                            </form>
-                        </div>
-                        
-                        <div class="sleep-stats">
-                            <h3>Sleep Statistics</h3>
-                            <div class="sleep-overview">
-                                <div class="sleep-stat">
-                                    <h4>Average Sleep</h4>
-                                    <div id="avg-sleep">0h 0m</div>
-                                    <small>Per night</small>
-                                </div>
-                                <div class="sleep-stat">
-                                    <h4>Consistency</h4>
-                                    <div id="sleep-consistency">0%</div>
-                                    <small>Weekly average</small>
-                                </div>
-                                <div class="sleep-stat">
-                                    <h4>Best Quality</h4>
-                                    <div id="best-quality">-</div>
-                                    <small>Recent period</small>
-                                </div>
-                            </div>
-    
-                            <div class="sleep-history-section">
-                                <h4>Sleep History</h4>
-                                <div class="sleep-history-list" id="sleep-history-list">
-                                   <!-- Sleep history will be populated here -->
-                                </div>
-                            </div>
-    
-                            <div class="sleep-chart-section">
-                                <h4>Sleep Patterns</h4>
-                                <div class="chart-container">
-                                    <canvas id="sleep-chart"></canvas>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- LifeLoop Tab -->
-                <div id="lifeloop" class="tab-content">
-                    <h2 class="section-title">LifeLoop - Personal Memory & Relationship Manager</h2>
-                    <div class="lifeloop-container">
-                        <div class="reminders-section">
-                            <h3>Birthday & Anniversary Reminder</h3>
-                            <div class="reminders-container">
-                                <div class="reminder-form">
-                                    <h4>Add Important Date</h4>
-                                    <form id="reminder-form">
-                                        <div class="form-group">
-                                            <label for="reminder-name">Name/Event</label>
-                                            <input type="text" id="reminder-name" class="form-control" required>
-                                        </div>
-                                        <div class="form-group">
-                                            <label for="reminder-date">Date</label>
-                                            <input type="date" id="reminder-date" class="form-control" required>
-                                        </div>
-                                        <div class="form-group">
-                                            <label for="reminder-type">Type</label>
-                                            <select id="reminder-type" class="form-control">
-                                                <option value="birthday">Birthday</option>
-                                                <option value="anniversary">Anniversary</option>
-                                                <option value="holiday">Holiday</option>
-                                                <option value="other">Other</option>
-                                            </select>
-                                        </div>
-                                        <div class="form-group">
-                                            <label for="reminder-notice">Remind me</label>
-                                            <select id="reminder-notice" class="form-control">
-                                                <option value="1">1 day before</option>
-                                                <option value="3">3 days before</option>
-                                                <option value="7">1 week before</option>
-                                                <option value="14">2 weeks before</option>
-                                                <option value="30">1 month before</option>
-                                            </select>
-                                        </div>
-                                        <button type="submit" class="btn-primary">Add Reminder</button>
-                                    </form>
-                                </div>
-                                
-                                <div class="reminders-list">
-                                    <h4>Upcoming Reminders</h4>
-                                    <div id="upcoming-reminders">
-                                        <!-- Upcoming reminders will be here -->
-                                    </div>
-                                    
-                                    <h4>All Reminders</h4>
-                                    <div id="all-reminders">
-                                        <!-- All reminders will be here -->
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- TaskForge Tab -->
-                <div id="taskforge" class="tab-content">
-                    <h2 class="section-title">TaskForge - Productivity Suite</h2>
-                    <div class="taskforge-container">
-                        <div class="taskforge-sidebar">
-                            <ul class="taskforge-nav">
-                                <li><a href="#" class="active" data-section="todo">📝 To-Do List</a></li>
-                                <li><a href="#" data-section="subscriptions">💰 Subscriptions</a></li>
-                            </ul>
-                        </div>
-                        
-                        <div class="taskforge-content">
-                            <!-- To-Do List Section -->
-                            <div id="todo" class="taskforge-section active">
-                                <div class="section-header">
-                                    <h3>To-Do List</h3>
-                                    <div class="task-stats">
-                                        <span id="pending-count">0 pending</span>
-                                        <span id="completed-count">0 completed</span>
-                                    </div>
-                                </div>
-                                
-                                <div class="todo-container">
-                                    <div class="todo-form-section">
-                                        <h4>Add New Task</h4>
-                                        <form id="todo-form" class="todo-form">
-                                            <div class="form-row">
-                                                <div class="form-group">
-                                                    <label for="todo-task">Task Description</label>
-                                                    <input type="text" id="todo-task" class="form-control" placeholder="What needs to be done?" required>
-                                                </div>
-                                            </div>
-                                            <div class="form-row">
-                                                <div class="form-group">
-                                                    <label for="todo-priority">Priority</label>
-                                                    <select id="todo-priority" class="form-control">
-                                                        <option value="low">Low Priority</option>
-                                                        <option value="medium">Medium Priority</option>
-                                                        <option value="high">High Priority</option>
-                                                    </select>
-                                                </div>
-                                                <div class="form-group">
-                                                    <label for="todo-due">Due Date</label>
-                                                    <input type="date" id="todo-due" class="form-control">
-                                                </div>
-                                            </div>
-                                            <button type="submit" class="btn-primary">Add Task</button>
-                                        </form>
-                                    </div>
-                                    
-                                    <div class="todo-lists-section">
-                                        <div class="todo-columns">
-                                            <div class="todo-column">
-                                                <h4>Pending Tasks</h4>
-                                                <div id="todo-list" class="task-list">
-                                                    <!-- Pending tasks will be here -->
-                                                </div>
-                                            </div>
-                                            
-                                            <div class="todo-column">
-                                                <h4>Completed Tasks</h4>
-                                                <div id="completed-list" class="task-list completed">
-                                                    <!-- Completed tasks will be here -->
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            <!-- Subscriptions Section -->
-                            <div id="subscriptions" class="taskforge-section">
-                                <div class="section-header">
-                                    <h3>Subscription Manager</h3>
-                                    <div class="subscription-stats">
-                                        <span id="total-subs">0 subscriptions</span>
-                                        <span id="monthly-cost">$0/month</span>
-                                    </div>
-                                </div>
-                                
-                                <div class="subscriptions-container">
-                                    <div class="subscription-form-section">
-                                        <h4>Add New Subscription</h4>
-                                        <form id="subscription-form" class="subscription-form">
-                                            <div class="form-row">
-                                                <div class="form-group">
-                                                    <label for="sub-name">Service Name</label>
-                                                    <input type="text" id="sub-name" class="form-control" placeholder="Netflix, Spotify, etc." required>
-                                                </div>
-                                                <div class="form-group">
-                                                    <label for="sub-price">Monthly Price</label>
-                                                    <div class="currency-input-container">
-                                                        <select id="sub-currency" class="currency-select">
-                                                            <option value="USD">$</option>
-                                                            <option value="EUR">€</option>
-                                                            <option value="GBP">£</option>
-                                                            <option value="JPY">¥</option>
-                                                            <option value="INR">₹</option>
-                                                            <option value="CAD">C$</option>
-                                                            <option value="AUD">A$</option>
-                                                        </select>
-                                                        <input type="number" id="sub-price" class="form-control currency-input" min="0" step="0.01" placeholder="0.00" required>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="form-row">
-                                                <div class="form-group">
-                                                    <label for="sub-category">Category</label>
-                                                    <select id="sub-category" class="form-control">
-                                                        <option value="streaming">Streaming</option>
-                                                        <option value="software">Software</option>
-                                                        <option value="utility">Utility</option>
-                                                        <option value="gaming">Gaming</option>
-                                                        <option value="other">Other</option>
-                                                    </select>
-                                                </div>
-                                                <div class="form-group">
-                                                    <label for="sub-renewal">Renewal Date</label>
-                                                    <input type="date" id="sub-renewal" class="form-control" required>
-                                                </div>
-                                            </div>
-                                            <button type="submit" class="btn-primary">Add Subscription</button>
-                                        </form>
-                                    </div>
-                                    
-                                    <div class="subscriptions-list-section">
-                                        <h4>Your Subscriptions</h4>
-                                        <div class="subscriptions-table-container">
-                                            <table class="subscriptions-table">
-                                                <thead>
-                                                    <tr>
-                                                        <th>Service</th>
-                                                        <th>Category</th>
-                                                        <th>Price</th>
-                                                        <th>Renewal</th>
-                                                        <th>Status</th>
-                                                        <th>Actions</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody id="subscriptions-body">
-                                                    <!-- Subscriptions will be populated here -->
-                                                </tbody>
-                                            </table>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- EduPlan Tab -->
-                <div id="eduplan" class="tab-content">
-                    <h2 class="section-title">EduPlan - Academic Organizer</h2>
-                    <div class="eduplan-container">
-                        <div class="eduplan-sidebar">
-                            <ul class="eduplan-nav">
-                                <li><a href="#" class="active" data-section="timetable">📅 Timetable</a></li>
-                                <li><a href="#" data-section="study">📚 Study Tracker</a></li>
-                                <li><a href="#" data-section="homework">📝 Homework</a></li>
-                                <li><a href="#" data-section="exams">📊 Exams</a></li>
-                                <li><a href="#" data-section="grades">🎯 Grades</a></li>
-                            </ul>
-                        </div>
-                          
-                        <div class="eduplan-content">
-                            <!-- Timetable Section -->
-                            <div id="timetable" class="eduplan-section active">
-                                <div class="section-header">
-                                    <h3>Class Timetable</h3>
-                                    <div class="timetable-controls">
-                                        <button id="add-class-btn" class="btn-primary">Add New Class</button>
-                                        <button id="view-timetable-btn" class="btn-secondary">View Timetable</button>
-                                    </div>
-                                </div>
-                                  
-                                <div class="timetable-container">
-                                    <!-- Add Class Section -->
-                                    <div id="add-class-section" class="timetable-setup">
-                                        <div class="setup-header">
-                                            <h4>Add New Class</h4>
-                                            <p>Fill in the details below to add a class to your timetable</p>
-                                        </div>
-                                        <form id="timetable-form" class="timetable-form">
-                                            <div class="form-row">
-                                                <div class="form-group">
-                                                    <label for="course-name">Course Name *</label>
-                                                    <input type="text" id="course-name" class="form-control" placeholder="e.g., Mathematics, Physics" required>
-                                                </div>
-                                                <div class="form-group">
-                                                    <label for="course-code">Course Code</label>
-                                                    <input type="text" id="course-code" class="form-control" placeholder="e.g., MATH101">
-                                                </div>
-                                            </div>
-                                            <div class="form-row">
-                                                <div class="form-group">
-                                                    <label for="course-day">Day *</label>
-                                                    <select id="course-day" class="form-control" required>
-                                                        <option value="">Select day</option>
-                                                        <option value="monday">Monday</option>
-                                                        <option value="tuesday">Tuesday</option>
-                                                        <option value="wednesday">Wednesday</option>
-                                                        <option value="thursday">Thursday</option>
-                                                        <option value="friday">Friday</option>
-                                                        <option value="saturday">Saturday</option>
-                                                        <option value="sunday">Sunday</option>
-                                                    </select>
-                                                </div>
-                                                <div class="form-group">
-                                                    <label for="course-time">Start Time *</label>
-                                                    <input type="time" id="course-time" class="form-control" required>
-                                                </div>
-                                                <div class="form-group">
-                                                    <label for="course-duration">Duration (minutes) *</label>
-                                                    <input type="number" id="course-duration" class="form-control" min="15" max="240" value="60" required>
-                                                </div>
-                                            </div>
-                                            <div class="form-group">
-                                                <label for="course-location">Location</label>
-                                                <input type="text" id="course-location" class="form-control" placeholder="Room number or building">
-                                            </div>
-                                            <div class="form-group">
-                                                <label for="course-instructor">Instructor</label>
-                                                <input type="text" id="course-instructor" class="form-control" placeholder="Professor name">
-                                            </div>
-                                            <div class="form-actions">
-                                                <button type="submit" class="btn-primary">Add to Timetable</button>
-                                                <button type="button" id="clear-form" class="btn-secondary">Clear Form</button>
-                                            </div>
-                                        </form>
-                                    </div>
-                                      
-                                    <!-- Timetable Display Section -->
-                                    <div id="timetable-display-section" class="timetable-display" style="display: none;">
-                                        <div class="timetable-header">
-                                            <h4>Weekly Class Schedule</h4>
-                                            <div class="timetable-actions">
-                                                <button id="back-to-add-class" class="btn-secondary">Add More Classes</button>
-                                                <button id="refresh-timetable" class="btn-primary">Refresh</button>
-                                                <button id="reset-timetable-db" class="btn-secondary" style="background: #ff6b6b; color: white;">Reset All Classes</button>
-                                            </div>
-                                        </div>
-                                        
-                                        <!-- Add back the class statistics -->
-                                        <div class="timetable-stats">
-                                            <div class="timetable-stat">
-                                                <span class="stat-value" id="total-classes">0</span>
-                                                <span class="stat-label">Total Classes</span>
-                                            </div>
-                                            <div class="timetable-stat">
-                                                <span class="stat-value" id="today-classes">0</span>
-                                                <span class="stat-label">Today's Classes</span>
-                                            </div>
-                                        </div>
-                                        
-                                        <div class="timetable-view-container">
-                                            <div class="timetable-view" id="timetable-view">
-                                                <!-- Timetable will be displayed here -->
-                                            </div>
-                                        </div>
-                                     </div>
-                                </div>
-                            </div>
-                            
-                            <!-- Study Tracker Section -->
-                            <div id="study" class="eduplan-section">
-                                <div class="section-header">
-                                    <h3>Study Tracker</h3>
-                                    <div class="study-stats-quick">
-                                        <span id="study-today-quick">Today: 0h 0m</span>
-                                        <span id="study-week-quick">Week: 0h 0m</span>
-                                    </div>
-                                </div>
-                                
-                                <div class="study-container">
-                                    <div class="study-session-section">
-                                        <h4>Start Study Session</h4>
-                                        <form id="study-form" class="study-form">
-                                            <div class="form-row">
-                                                <div class="form-group">
-                                                    <label for="study-subject">Subject</label>
-                                                    <input type="text" id="study-subject" class="form-control" required>
-                                                </div>
-                                                <div class="form-group">
-                                                    <label for="study-topic">Topic</label>
-                                                    <input type="text" id="study-topic" class="form-control" placeholder="Specific topic (optional)">
-                                                </div>
-                                            </div>
-                                            <div class="form-row">
-                                                <div class="form-group">
-                                                    <label for="study-duration">Duration (minutes)</label>
-                                                    <input type="number" id="study-duration" class="form-control" min="15" value="60">
-                                                </div>
-                                                <div class="form-group">
-                                                    <label for="study-goal">Study Goal</label>
-                                                    <input type="text" id="study-goal" class="form-control" placeholder="What you want to achieve">
-                                                </div>
-                                            </div>
-                                            <button type="submit" class="btn-primary">Start Session</button>
-                                        </form>
-                                        <button id="show-study-history" class="btn-secondary" style="margin-top: 1rem;">Show Study History</button>
-                                    </div>
-                                    
-                                    <div class="study-progress-section">
-                                        <div class="study-stats-detailed">
-                                            <div class="study-stat-card">
-                                                <h5>Today</h5>
-                                                <div id="study-today">0h 0m</div>
-                                            </div>
-                                            <div class="study-stat-card">
-                                                <h5>This Week</h5>
-                                                <div id="study-week">0h 0m</div>
-                                            </div>
-                                            <div class="study-stat-card">
-                                                <h5>Total</h5>
-                                                <div id="study-total">0h 0m</div>
-                                            </div>
-                                        </div>
-                                        
-                                        <!-- Study History Popup -->
-                                        <div id="study-history-popup" class="popup-container" style="display: none;">
-                                            <div class="popup-content">
-                                                <div class="popup-header">
-                                                    <h4>Study History</h4>
-                                                    <button id="close-study-history" class="close-popup">✕</button>
-                                                </div>
-                                                <div class="study-history-section">
-                                                    <div class="study-sessions-table-container">
-                                                        <table class="study-sessions-table">
-                                                            <thead>
-                                                                <tr>
-                                                                    <th>Subject</th>
-                                                                    <th>Topic</th>
-                                                                    <th>Duration</th>
-                                                                    <th>Date</th>
-                                                                    <th>Actions</th>
-                                                                </tr>
-                                                            </thead>
-                                                            <tbody id="study-sessions-body">
-                                                                <!-- Study sessions will be here -->
-                                                            </tbody>
-                                                        </table>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            <!-- Homework Section -->
-                            <div id="homework" class="eduplan-section">
-                                <div class="section-header">
-                                    <h3>Homework Tracker</h3>
-                                    <div class="homework-stats">
-                                        <span id="pending-homework">0 pending</span>
-                                        <span id="due-soon">0 due soon</span>
-                                    </div>
-                                </div>
-                                
-                                <div class="homework-container">
-                                    <div class="homework-form-section">
-                                        <h4>Add Homework</h4>
-                                        <form id="homework-form" class="homework-form">
-                                            <div class="form-row">
-                                                <div class="form-group">
-                                                    <label for="hw-subject">Subject</label>
-                                                    <input type="text" id="hw-subject" class="form-control" required>
-                                                </div>
-                                                <div class="form-group">
-                                                    <label for="hw-priority">Priority</label>
-                                                    <select id="hw-priority" class="form-control">
-                                                        <option value="low">Low</option>
-                                                        <option value="medium">Medium</option>
-                                                        <option value="high">High</option>
-                                                    </select>
-                                                </div>
-                                            </div>
-                                            <div class="form-group">
-                                                <label for="hw-task">Assignment Description</label>
-                                                <textarea id="hw-task" class="form-control" rows="3" placeholder="Describe the homework assignment..." required></textarea>
-                                            </div>
-                                            <div class="form-row">
-                                                <div class="form-group">
-                                                    <label for="hw-due">Due Date</label>
-                                                    <input type="date" id="hw-due" class="form-control" required>
-                                                </div>
-                                                <div class="form-group">
-                                                    <label for="hw-estimate">Time Estimate (min)</label>
-                                                    <input type="number" id="hw-estimate" class="form-control" min="15" value="60">
-                                                </div>
-                                            </div>
-                                            <button type="submit" class="btn-primary">Add Homework</button>
-                                        </form>
-                                    </div>
-                                    
-                                    <div class="homework-list-section">
-                                        <h4>Pending Assignments</h4>
-                                        <div id="homework-list" class="homework-list">
-                                            <!-- Homework items will be here -->
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            <!-- Exams Section -->
-                            <div id="exams" class="eduplan-section">
-                                <div class="section-header">
-                                    <h3>Exam Schedule</h3>
-                                    <div class="exam-stats">
-                                        <span id="upcoming-exams">0 upcoming</span>
-                                        <span id="exams-this-month">0 this month</span>
-                                    </div>
-                                </div>
-                                
-                                <div class="exams-container">
-                                    <div class="exam-form-section">
-                                        <h4>Add Exam</h4>
-                                        <form id="exam-form" class="exam-form">
-                                            <div class="form-row">
-                                                <div class="form-group">
-                                                    <label for="exam-subject">Subject</label>
-                                                    <input type="text" id="exam-subject" class="form-control" required>
-                                                </div>
-                                                <div class="form-group">
-                                                    <label for="exam-type">Exam Type</label>
-                                                    <select id="exam-type" class="form-control">
-                                                        <option value="midterm">Midterm</option>
-                                                        <option value="final">Final</option>
-                                                        <option value="quiz">Quiz</option>
-                                                        <option value="test">Test</option>
-                                                    </select>
-                                                </div>
-                                            </div>
-                                            <div class="form-row">
-                                                <div class="form-group">
-                                                    <label for="exam-date">Exam Date</label>
-                                                    <input type="date" id="exam-date" class="form-control" required>
-                                                </div>
-                                                <div class="form-group">
-                                                    <label for="exam-time">Exam Time</label>
-                                                    <input type="time" id="exam-time" class="form-control" required>
-                                                </div>
-                                            </div>
-                                            <div class="form-row">
-                                                <div class="form-group">
-                                                    <label for="exam-location">Location</label>
-                                                    <input type="text" id="exam-location" class="form-control" placeholder="Room number or building">
-                                                </div>
-                                                <div class="form-group">
-                                                    <label for="exam-duration">Duration (min)</label>
-                                                    <input type="number" id="exam-duration" class="form-control" min="15" value="120">
-                                                </div>
-                                            </div>
-                                            <button type="submit" class="btn-primary">Add Exam</button>
-                                        </form>
-                                    </div>
-                                    
-                                    <div class="exams-list-section">
-                                        <h4>Upcoming Exams</h4>
-                                        <div id="exams-list" class="exams-list">
-                                            <!-- Exams will be here -->
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            <!-- Grades Section -->
-                            <div id="grades" class="eduplan-section">
-                                <div class="section-header">
-                                    <h3>Grade Tracker</h3>
-                                    <div class="grade-stats">
-                                        <div class="gpa-display">
-                                            <span id="current-gpa">GPA: -</span>
-                                        </div>
-                                    </div>
-                                </div>
-                                
-                                <div class="grades-container">
-                                    <div class="grade-form-section">
-                                        <h4>Add Grade</h4>
-                                        <form id="grade-form" class="grade-form">
-                                            <div class="form-row">
-                                                <div class="form-group">
-                                                    <label for="grade-subject">Subject</label>
-                                                    <input type="text" id="grade-subject" class="form-control" required>
-                                                </div>
-                                                <div class="form-group">
-                                                    <label for="grade-type">Assessment Type</label>
-                                                    <select id="grade-type" class="form-control">
-                                                        <option value="assignment">Assignment</option>
-                                                        <option value="quiz">Quiz</option>
-                                                        <option value="midterm">Midterm</option>
-                                                        <option value="final">Final</option>
-                                                        <option value="project">Project</option>
-                                                    </select>
-                                                </div>
-                                            </div>
-                                            <div class="form-row">
-                                                <div class="form-group">
-                                                    <label for="grade-score">Score</label>
-                                                    <input type="number" id="grade-score" class="form-control" min="0" max="100" step="0.1" placeholder="0-100" required>
-                                                </div>
-                                                <div class="form-group">
-                                                    <label for="grade-max">Maximum Score</label>
-                                                    <input type="number" id="grade-max" class="form-control" min="1" value="100">
-                                                </div>
-                                            </div>
-                                            <div class="form-row">
-                                                <div class="form-group">
-                                                    <label for="grade-weight">Weight (%)</label>
-                                                    <input type="number" id="grade-weight" class="form-control" min="0" max="100" value="100">
-                                                </div>
-                                                <div class="form-group">
-                                                    <label for="grade-date">Date</label>
-                                                    <input type="date" id="grade-date" class="form-control" required>
-                                                </div>
-                                            </div>
-                                            <button type="submit" class="btn-primary">Add Grade</button>
-                                        </form>
-                                    </div>
-                                    
-                                    <div class="grades-list-section">
-                                        <h4>Grade History</h4>
-                                        <div class="grades-table-container">
-                                            <table class="grades-table">
-                                                <thead>
-                                                    <tr>
-                                                        <th>Subject</th>
-                                                        <th>Type</th>
-                                                        <th>Score</th>
-                                                        <th>Percentage</th>
-                                                        <th>Weight</th>
-                                                        <th>Date</th>
-                                                        <th>Actions</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody id="grades-body">
-                                                    <!-- Grades will be populated here -->
-                                                </tbody>
-                                            </table>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Notification Container -->
-    <div id="notification-container"></div>
-
-    <!-- Medication Alarm Modal -->
-    <div id="medication-alarm" class="modal" style="display: none;">
-        <div class="modal-content">
-            <h3>💊 Medication Reminder</h3>
-            <p id="alarm-message">It's time to take your medication!</p>
-            <div class="alarm-controls">
-                <button id="stop-alarm" class="btn-primary">Stop Alarm</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Notification Modal -->
-    <div id="notification-modal" class="modal" style="display: none;">
-        <div class="modal-content">
-            <h3 id="notification-title">Notification</h3>
-            <p id="notification-message"></p>
-            <div class="notification-controls">
-                <button id="acknowledge-notification" class="btn-primary">Acknowledge</button>
-                <button id="remind-later" class="btn-secondary">Remind in 5 mins</button>
-            </div>
+            </main>
         </div>
     </div>
 
     <footer>
         <div class="container">
-            <p>&copy; Made by Atiksh</p>
+            <p>© BudgetBuddy - Track your expenses with ease</p>
         </div>
     </footer>
 
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="script.js"></script>
 </body>
 </html>
