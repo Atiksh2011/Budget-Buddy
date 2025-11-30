@@ -3,10 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BudgetBuddy</title>
-    <link rel="stylesheet" href="styles.css">
+    <title>BudgetBuddy - Smart Expense Tracking</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     <header>
@@ -21,18 +20,18 @@
 
     <div class="container">
         <div class="main-content">
-            <aside class="sidebar">
+            <div class="sidebar">
                 <h3><i>📊</i> Navigation</h3>
                 <ul class="nav-tabs">
                     <li><a href="#" class="active" data-tab="add-expense"><i>➕</i> Add Expense</a></li>
-                    <li><a href="#" data-tab="view-expenses"><i>📋</i> View Expenses</a></li>
+                    <li><a href="#" data-tab="view-expenses"><i>📈</i> View Expenses</a></li>
                 </ul>
-            </aside>
+            </div>
 
-            <main class="content-area">
+            <div class="content-area">
+                <!-- Add Expense Tab -->
                 <div id="add-expense" class="tab-content active">
                     <h2 class="section-title">Add New Expense</h2>
-                    
                     <form id="expense-form">
                         <div class="form-group">
                             <label for="expense-name">Expense Name</label>
@@ -40,11 +39,9 @@
                         </div>
                         
                         <div class="form-group">
-                            <label for="expense-category">Category</label>
-                            <input type="hidden" id="expense-category">
-                            <input type="hidden" id="expense-subcategory">
-                            
+                            <label>Category</label>
                             <div class="category-selection">
+                                <!-- Main Categories -->
                                 <div id="main-categories" class="expense-categories">
                                     <div class="category-item" data-category="food">
                                         <div class="category-icon">🍕</div>
@@ -63,7 +60,7 @@
                                         <div>Shopping</div>
                                     </div>
                                     <div class="category-item" data-category="bills">
-                                        <div class="category-icon">📄</div>
+                                        <div class="category-icon">🧾</div>
                                         <div>Bills</div>
                                     </div>
                                     <div class="category-item" data-category="health">
@@ -76,13 +73,21 @@
                                     </div>
                                 </div>
                                 
-                                <div id="sub-categories" style="display: none;"></div>
+                                <!-- Sub Categories -->
+                                <div id="sub-categories" class="expense-categories" style="display: none;">
+                                    <button type="button" id="back-to-main-categories" class="back-btn">
+                                        <i>←</i> Back to Categories
+                                    </button>
+                                    <!-- Subcategories will be populated here -->
+                                </div>
                             </div>
+                            <input type="hidden" id="expense-category" required>
+                            <input type="hidden" id="expense-subcategory">
                         </div>
                         
                         <div class="form-group">
                             <label for="expense-amount">Amount</label>
-                            <input type="number" id="expense-amount" class="form-control" placeholder="Enter amount" step="0.01" min="0" required>
+                            <input type="number" id="expense-amount" class="form-control" placeholder="Enter amount in rupees" min="0" step="0.01" required>
                         </div>
                         
                         <div class="form-group">
@@ -92,13 +97,14 @@
                         
                         <div class="form-group">
                             <label for="expense-notes">Notes (Optional)</label>
-                            <textarea id="expense-notes" class="form-control" placeholder="Add any additional notes" rows="3"></textarea>
+                            <textarea id="expense-notes" class="form-control" rows="3" placeholder="Add any additional notes"></textarea>
                         </div>
                         
                         <button type="submit" class="btn btn-primary">Add Expense</button>
                     </form>
                 </div>
 
+                <!-- View Expenses Tab -->
                 <div id="view-expenses" class="tab-content">
                     <h2 class="section-title">Your Expenses</h2>
                     
@@ -106,32 +112,30 @@
                         <div class="stat-card">
                             <h3>Total Spent</h3>
                             <div class="value rupee-symbol" id="total-spent">₹0.00</div>
-                            <select class="period-select" id="total-period">
+                            <select id="total-period" class="period-select">
                                 <option value="daily">Today</option>
                                 <option value="weekly">This Week</option>
-                                <option value="monthly" selected>This Month</option>
+                                <option value="monthly">This Month</option>
                                 <option value="yearly">This Year</option>
                             </select>
                         </div>
-                        
                         <div class="stat-card">
-                            <h3>Average Daily</h3>
+                            <h3>Average Daily Spending</h3>
                             <div class="value rupee-symbol" id="avg-daily">₹0.00</div>
-                            <select class="period-select" id="avg-period">
+                            <select id="avg-period" class="period-select">
                                 <option value="daily">Today</option>
                                 <option value="weekly">This Week</option>
-                                <option value="monthly" selected>This Month</option>
+                                <option value="monthly">This Month</option>
                                 <option value="yearly">This Year</option>
                             </select>
                         </div>
-                        
                         <div class="stat-card">
                             <h3>Biggest Expense</h3>
                             <div class="value" id="biggest-category">None</div>
-                            <select class="period-select" id="biggest-period">
+                            <select id="biggest-period" class="period-select">
                                 <option value="daily">Today</option>
                                 <option value="weekly">This Week</option>
-                                <option value="monthly" selected>This Month</option>
+                                <option value="monthly">This Month</option>
                                 <option value="yearly">This Year</option>
                             </select>
                         </div>
@@ -142,7 +146,6 @@
                             <button class="chart-type-btn active" data-chart-type="pie">Pie Chart</button>
                             <button class="chart-type-btn" data-chart-type="bar">Bar Chart</button>
                         </div>
-                        
                         <div class="time-filters">
                             <div class="time-filter active" data-period="daily">Daily</div>
                             <div class="time-filter" data-period="weekly">Weekly</div>
@@ -156,7 +159,6 @@
                     </div>
                     
                     <h3 class="section-title">Recent Expenses</h3>
-                    
                     <div class="table-container">
                         <table class="expense-table">
                             <thead>
@@ -170,24 +172,25 @@
                                 </tr>
                             </thead>
                             <tbody id="expense-table-body">
-                                <!-- Expenses will be populated here by JavaScript -->
+                                <!-- Expenses will be populated here -->
                             </tbody>
                         </table>
-                        <div id="no-expenses-message" class="no-expenses">
-                            No expenses recorded yet! Add your first expense in the "Add Expense" tab!
-                        </div>
+                    </div>
+                    <div id="no-expenses-message" class="no-expenses" style="display: none;">
+                        No expenses recorded yet. Add your first expense in the "Add Expense" tab!
                     </div>
                 </div>
-            </main>
+            </div>
         </div>
     </div>
 
     <footer>
         <div class="container">
-            <p>© BudgetBuddy - Track your expenses with ease</p>
+            <p>&copy; Made By Atiksh</p>
         </div>
     </footer>
 
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="script.js"></script>
 </body>
 </html>
